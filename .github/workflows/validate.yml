@@ -1,0 +1,27 @@
+name: Validate integration
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        homeassistant: ["2026.11.2", "2026.11.3"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.14"
+      - run: pip install -r requirements-dev.txt homeassistant==${{ matrix.homeassistant }}
+      - run: ruff check custom_components tests
+      - run: ruff format --check custom_components tests
+      - run: python -m tests.run -q
+  hassfest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: home-assistant/actions/hassfest@master

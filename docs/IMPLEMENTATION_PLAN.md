@@ -1,8 +1,10 @@
 # Implementatieplan Home Assistant
 
+Status: de eerste testversie 0.1.0 is geïmplementeerd. Onderstaande afspraken vormen de basis. De actuele installatie- en testinstructies staan in de README.
+
 ## Afgesproken basis
 
-Eén config entry per Car share assistant-installatie, met app-adres en service-API-sleutel. Geen aparte websessie per gezinslid: de service mag voor alle gezinsleden reserveringen beheren. Config Flow test API-versie en sleutel; reauth vervangt ingetrokken sleutels. Het stabiele `instance_id` voorkomt dubbele installaties.
+Eén config entry per Car share assistant-installatie, met automatisch ontdekt app-adres en een beheerdersaanmelding die een servicecredential oplevert. Het adres is later herconfigureerbaar; het wachtwoord wordt niet bewaard. Geen aparte websessie per gezinslid: de service mag voor alle gezinsleden reserveringen beheren. Config Flow test API-versie en sleutel; reauth vervangt ingetrokken sleutels. Het stabiele `instance_id` voorkomt dubbele installaties.
 
 Eén apparaat per auto en één apparaat per persoon, met stabiele server-IDs. De autokalender is uitsluitend lezen: geen `async_create_event`, `async_update_event` of `async_delete_event`. Een afspraak toont bestuurder, begin/einde, deelnemers, route en opmerking. Kalenderopvragen gebruiken de werkelijk gevraagde periode, volgen paginering en verwerken tijdzones. Een persoonskalender is uitgesteld.
 

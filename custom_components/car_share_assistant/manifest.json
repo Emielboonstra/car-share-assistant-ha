@@ -1,0 +1,14 @@
+{
+  "domain": "car_share_assistant",
+  "name": "Car share assistant",
+  "codeowners": ["@Emielboonstra"],
+  "config_flow": true,
+  "dependencies": ["zeroconf"],
+  "documentation": "https://github.com/Emielboonstra/car-share-assistant-ha",
+  "integration_type": "service",
+  "iot_class": "local_polling",
+  "issue_tracker": "https://github.com/Emielboonstra/car-share-assistant-ha/issues",
+  "requirements": [],
+  "version": "0.1.0",
+  "zeroconf": ["_carshare._tcp.local."]
+}

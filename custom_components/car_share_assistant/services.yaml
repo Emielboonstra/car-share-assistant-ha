@@ -1,0 +1,116 @@
+create_reservation:
+  fields:
+    vehicle_id: &vehicle
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: car_share_assistant
+              model: Gezinsauto
+    person_id: &person
+      required: true
+      selector:
+        device:
+          filter:
+            - integration: car_share_assistant
+              model: Gezinslid
+    start_time: &start
+      required: true
+      selector:
+        datetime:
+    end_time: &end
+      required: true
+      selector:
+        datetime:
+    route: &route
+      required: true
+      selector:
+        select:
+          translation_key: route
+          options:
+            - z1
+            - z2
+            - g1
+            - other
+    participants: &participants
+      selector:
+        device:
+          multiple: true
+          filter:
+            - integration: car_share_assistant
+              model: Gezinslid
+    kilometers: &kilometers
+      default: 0
+      selector:
+        number:
+          min: 0
+          max: 100000
+          step: 0.1
+          mode: box
+          unit_of_measurement: km
+    comment: &comment
+      selector:
+        text:
+          multiline: true
+    idempotency_key:
+      advanced: true
+      selector:
+        text:
+    config_entry_id: &entry
+      advanced: true
+      selector:
+        config_entry:
+          integration: car_share_assistant
+update_reservation:
+  fields:
+    reservation_id: &reservation
+      required: true
+      selector:
+        text:
+    vehicle_id: *vehicle
+    person_id: *person
+    start_time: *start
+    end_time: *end
+    route: *route
+    participants: *participants
+    kilometers: *kilometers
+    comment: *comment
+    version: &version
+      advanced: true
+      selector:
+        number:
+          min: 1
+          max: 2147483647
+          mode: box
+    config_entry_id: *entry
+cancel_reservation:
+  fields:
+    reservation_id: *reservation
+    version: *version
+    config_entry_id: *entry
+check_availability:
+  fields:
+    vehicle_id: *vehicle
+    start_time: *start
+    end_time: *end
+    config_entry_id: *entry
+get_reservations:
+  fields:
+    start_time: *start
+    end_time: *end
+    vehicle_id:
+      selector:
+        device:
+          filter:
+            - integration: car_share_assistant
+              model: Gezinsauto
+    person_id:
+      selector:
+        device:
+          filter:
+            - integration: car_share_assistant
+              model: Gezinslid
+    config_entry_id: *entry
+refresh:
+  fields:
+    config_entry_id: *entry

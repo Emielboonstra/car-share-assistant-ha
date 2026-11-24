@@ -1,0 +1,58 @@
+{
+  "entity": {
+    "sensor": {
+      "cost_this_month": {
+        "default": "mdi:currency-eur"
+      },
+      "cost_last_month": {
+        "default": "mdi:currency-eur"
+      },
+      "cost_through_today": {
+        "default": "mdi:currency-eur"
+      },
+      "rides_this_month": {
+        "default": "mdi:counter"
+      },
+      "driver_rides_this_month": {
+        "default": "mdi:counter"
+      },
+      "next_reservation": {
+        "default": "mdi:calendar-clock"
+      },
+      "current_driver": {
+        "default": "mdi:steering"
+      },
+      "next_start": {
+        "default": "mdi:calendar-clock"
+      },
+      "next_end": {
+        "default": "mdi:calendar-clock"
+      }
+    },
+    "binary_sensor": {
+      "reserved": {
+        "default": "mdi:car-clock"
+      }
+    }
+  },
+  "services": {
+    "create_reservation": {
+      "service": "mdi:calendar-plus"
+    },
+    "update_reservation": {
+      "service": "mdi:calendar-edit"
+    },
+    "cancel_reservation": {
+      "service": "mdi:calendar-remove"
+    },
+    "check_availability": {
+      "service": "mdi:calendar-check"
+    },
+    "get_reservations": {
+      "service": "mdi:calendar-search"
+    },
+    "refresh": {
+      "service": "mdi:refresh"
+    }
+  }
+}

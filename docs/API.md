@@ -1,10 +1,10 @@
 # Car share assistant service-API v1
 
-Contract voor app-versie 0.2.0. Deze endpoints zijn geïmplementeerd in de eigen Car share assistant-server en met een tijdelijke testdatabase getest. Voorbeelden bevatten fictieve gegevens. De webapp is een apart project; deze repository bevat het contract voor de toekomstige HA-client.
+Contract voor app-versie 0.3.0. Deze endpoints zijn geïmplementeerd in de eigen Car share assistant-server en met een tijdelijke testdatabase getest. Voorbeelden bevatten fictieve gegevens. De webapp is een apart project; deze repository bevat het contract voor de toekomstige HA-client.
 
 ## Authenticatie en bevoegdheden
 
-Een beheerder maakt in **Instellingen → Home Assistant** een sleutel aan. De volledige sleutel verschijnt één keer. De server bewaart alleen een SHA-256-hash. De sleutel heeft geen automatische vervaldatum, kan worden ingetrokken en blijft onafhankelijk van websessies geldig. Intrekken werkt vanaf het eerstvolgende verzoek. Als de eigenaar geen beheerder meer is, werkt de sleutel niet meer.
+Home Assistant meldt eenmalig aan met een beheerdersgebruikersnaam en wachtwoord via `POST /api/v1/auth/login`. Invoer: `username`, `password` en optioneel `name` (standaard Home Assistant). Antwoord HTTP 201: `token`, `key_id`, `instance_id`, `api_version`. Deze route vereist `X-Carshare-Request: 1`, heeft dezelfde inloglimiet als de webaanmelding, weigert gewone gezinsaccounts en zet geen webcookie. HA bewaart de servicecredential en niet het wachtwoord. `DELETE /api/v1/auth/key` met Bearer-auth trekt uitsluitend de eigen credential in. Een beheerder kan daarnaast in **Instellingen → Home Assistant** een sleutel aanmaken of intrekken. De volledige sleutel verschijnt één keer. De server bewaart alleen een SHA-256-hash. De sleutel heeft geen automatische vervaldatum, kan worden ingetrokken en blijft onafhankelijk van websessies geldig. Intrekken werkt vanaf het eerstvolgende verzoek. Als de eigenaar geen beheerder meer is, werkt de sleutel niet meer.
 
 Alle verzoeken sturen `Authorization: Bearer <API-sleutel>`. Schrijfverzoeken sturen daarnaast `X-Carshare-Request: 1` en JSON `Content-Type: application/json`. Cookies en CSRF-tokens zijn voor deze service-endpoints niet nodig. Gebruik bij voorkeur HTTPS; controleer certificaten en stuur sleutels nooit in URL’s, logs of naar een andere host na een redirect.
 
@@ -87,4 +87,8 @@ Er is geen specifieke API-quota of pushverbinding. De HA-client moet redelijk po
 
 Een async `CarShareClient` ontvangt een bestaande `aiohttp.ClientSession`, een gevalideerd app-adres en de API-sleutel. Methoden: `async_get_info`, `async_get_state`, `async_get_reservations` (alle pagina’s), `async_get_reservation`, `async_get_costs`, `async_check_availability`, `async_create_reservation`, `async_update_reservation`, `async_cancel_reservation`.
 
-Gebruik een begrensde timeout, certificaatcontrole, geen redirects naar andere hosts, geen credentiallogging en duidelijke exceptions voor authenticatie, bevoegdheden, conflicten, invoer en verbinding. Geen automatische herhaling van mutaties. De aanroepende actie houdt de idempotentiesleutel vast. Stabiele IDs combineren `instance_id` met auto/persoon-ID. Dit ontwerp is nog geen geïmplementeerde HA-integratie.
+Gebruik een begrensde timeout, certificaatcontrole, geen redirects naar andere hosts, geen credentiallogging en duidelijke exceptions voor authenticatie, bevoegdheden, conflicten, invoer en verbinding. Geen automatische herhaling van mutaties. De aanroepende actie houdt de idempotentiesleutel vast. Stabiele IDs combineren `instance_id` met auto/persoon-ID. De client en integratie staan in `custom_components/car_share_assistant`.
+
+## Automatische ontdekking
+
+De webapp kan met `CARSHARE_DISCOVERY=1` mDNS adverteren op `_carshare._tcp.local.`. TXT-velden bevatten alleen het stabiele `id`, `api=1` en optioneel het ingestelde HTTPS-`url`. Geen accounts of secrets. Zonder HTTPS-adres wordt het gevonden lokale adres met poort gebruikt. Een bestaande HA-configuratie wordt niet automatisch door mDNS aangepast; het adres kan via Opnieuw configureren worden gewijzigd na controle van het installatie-ID.

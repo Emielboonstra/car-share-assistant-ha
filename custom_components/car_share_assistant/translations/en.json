@@ -1,0 +1,288 @@
+{
+  "title": "Car share assistant",
+  "config": {
+    "flow_title": "Car share assistant",
+    "step": {
+      "discover": {
+        "title": "Find the app",
+        "description": "No Car share assistant instance was found. Search again or connect manually.",
+        "menu_options": {
+          "search": "Search again",
+          "manual": "Connect manually"
+        }
+      },
+      "manual": {
+        "title": "Connect manually",
+        "data": {
+          "url": "Webapp address"
+        }
+      },
+      "select": {
+        "title": "Choose your Car share assistant",
+        "data": {
+          "server": "Discovered app"
+        }
+      },
+      "login": {
+        "title": "Sign in as an administrator",
+        "description": "Connect to {url}. Use your Car share assistant administrator account. The integration does not store your password.",
+        "data": {
+          "username": "Username",
+          "password": "Password"
+        }
+      },
+      "reconfigure": {
+        "title": "Change server address",
+        "description": "The new address must point to the same Car share assistant instance.",
+        "data": {
+          "url": "Webapp address"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Login failed or the credential was revoked. Check your credentials.",
+      "admin_required": "Use a Car share assistant administrator account.",
+      "server_update_required": "Update the webapp to version 0.3.0 or later.",
+      "cannot_connect": "Cannot reach the app. Check the network and server address.",
+      "invalid_response": "Invalid address or API response. Check the webapp version.",
+      "wrong_instance": "This address points to a different instance."
+    },
+    "abort": {
+      "already_configured": "This instance is already configured.",
+      "wrong_instance": "This is a different Car share assistant instance.",
+      "invalid_discovery": "Invalid discovery information. Connect manually.",
+      "reauth_successful": "Reauthentication successful.",
+      "reconfigure_successful": "The address was updated."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Synchronization",
+        "data": {
+          "scan_interval": "Refresh interval (minutes)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cost_this_month": {
+        "name": "Costs this month"
+      },
+      "cost_last_month": {
+        "name": "Costs last month"
+      },
+      "cost_through_today": {
+        "name": "Costs through today"
+      },
+      "rides_this_month": {
+        "name": "Rides this month"
+      },
+      "driver_rides_this_month": {
+        "name": "Driver rides this month"
+      },
+      "next_reservation": {
+        "name": "Next reservation"
+      },
+      "current_driver": {
+        "name": "Current driver"
+      },
+      "next_start": {
+        "name": "Next reservation starts"
+      },
+      "next_end": {
+        "name": "Next reservation ends"
+      }
+    },
+    "binary_sensor": {
+      "reserved": {
+        "name": "Reserved"
+      }
+    }
+  },
+  "selector": {
+    "route": {
+      "options": {
+        "z1": "1× first destination return",
+        "z2": "2× first destination return",
+        "g1": "1× second destination return",
+        "other": "Other (kilometers)"
+      }
+    }
+  },
+  "services": {
+    "create_reservation": {
+      "name": "Create reservation",
+      "description": "Reserve for the selected family member, including cost sharing and comment.",
+      "fields": {
+        "vehicle_id": {
+          "name": "Vehicle",
+          "description": "Choose a vehicle device. YAML also accepts its stable app ID."
+        },
+        "person_id": {
+          "name": "Reserve for",
+          "description": "Choose the driver. Any HA user allowed to call the action may select a family member."
+        },
+        "start_time": {
+          "name": "Start time",
+          "description": "Use whole minutes. Without an offset, the app time zone applies."
+        },
+        "end_time": {
+          "name": "End time",
+          "description": "After start; reservations must stay within one local day."
+        },
+        "route": {
+          "name": "Route",
+          "description": "Destinations and rates are configured in the webapp. Enter kilometers for Other."
+        },
+        "participants": {
+          "name": "Share costs with",
+          "description": "The driver is always included. Costs are split equally."
+        },
+        "kilometers": {
+          "name": "Distance",
+          "description": "Must be greater than zero for Other."
+        },
+        "comment": {
+          "name": "Comment",
+          "description": "Saved with the reservation."
+        },
+        "idempotency_key": {
+          "name": "Idempotency key",
+          "description": "Optional: 16–80 letters/digits/hyphens. Reusing the same key and input does not create a second reservation."
+        },
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    },
+    "update_reservation": {
+      "name": "Update reservation",
+      "description": "Replace all details of an existing reservation.",
+      "fields": {
+        "reservation_id": {
+          "name": "Reservation ID",
+          "description": "From an action response, reservation query or entity attributes."
+        },
+        "vehicle_id": {
+          "name": "Vehicle",
+          "description": "Choose a vehicle device. YAML also accepts its stable app ID."
+        },
+        "person_id": {
+          "name": "Reserve for",
+          "description": "Choose the driver. Any HA user allowed to call the action may select a family member."
+        },
+        "start_time": {
+          "name": "Start time",
+          "description": "Use whole minutes. Without an offset, the app time zone applies."
+        },
+        "end_time": {
+          "name": "End time",
+          "description": "After start; reservations must stay within one local day."
+        },
+        "route": {
+          "name": "Route",
+          "description": "Destinations and rates are configured in the webapp. Enter kilometers for Other."
+        },
+        "participants": {
+          "name": "Share costs with",
+          "description": "The driver is always included. Costs are split equally."
+        },
+        "kilometers": {
+          "name": "Distance",
+          "description": "Must be greater than zero for Other."
+        },
+        "comment": {
+          "name": "Comment",
+          "description": "Saved with the reservation."
+        },
+        "version": {
+          "name": "Version",
+          "description": "Optional. The current version is fetched first when omitted."
+        },
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    },
+    "cancel_reservation": {
+      "name": "Cancel reservation",
+      "description": "Cancel an existing reservation.",
+      "fields": {
+        "reservation_id": {
+          "name": "Reservation ID",
+          "description": "From an action response, reservation query or entity attributes."
+        },
+        "version": {
+          "name": "Version",
+          "description": "Optional. The current version is fetched first when omitted."
+        },
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    },
+    "check_availability": {
+      "name": "Check availability",
+      "description": "Check without reserving. Returns response data.",
+      "fields": {
+        "vehicle_id": {
+          "name": "Vehicle",
+          "description": "Choose a vehicle device. YAML also accepts its stable app ID."
+        },
+        "start_time": {
+          "name": "Start time",
+          "description": "Use whole minutes. Without an offset, the app time zone applies."
+        },
+        "end_time": {
+          "name": "End time",
+          "description": "After start; reservations must stay within one local day."
+        },
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    },
+    "get_reservations": {
+      "name": "Get reservations",
+      "description": "Get reservations for a period, optionally filtered by vehicle or participant.",
+      "fields": {
+        "start_time": {
+          "name": "Start time",
+          "description": "Use whole minutes. Without an offset, the app time zone applies."
+        },
+        "end_time": {
+          "name": "End time",
+          "description": "After start; reservations must stay within one local day."
+        },
+        "vehicle_id": {
+          "name": "Vehicle",
+          "description": "Choose a vehicle device. YAML also accepts its stable app ID."
+        },
+        "person_id": {
+          "name": "Reserve for",
+          "description": "Choose the driver. Any HA user allowed to call the action may select a family member."
+        },
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Refresh",
+      "description": "Refresh vehicles, people, reservations and monthly costs.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Installation",
+          "description": "Required only when multiple Car share assistant instances are configured."
+        }
+      }
+    }
+  }
+}

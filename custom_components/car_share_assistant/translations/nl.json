@@ -1,0 +1,288 @@
+{
+  "title": "Car share assistant",
+  "config": {
+    "flow_title": "Car share assistant",
+    "step": {
+      "discover": {
+        "title": "App zoeken",
+        "description": "Er is nog geen Car share assistant gevonden. Zoek opnieuw of verbind handmatig.",
+        "menu_options": {
+          "search": "Opnieuw zoeken",
+          "manual": "Handmatig verbinden"
+        }
+      },
+      "manual": {
+        "title": "Handmatig verbinden",
+        "data": {
+          "url": "Adres van de webapp"
+        }
+      },
+      "select": {
+        "title": "Kies je Car share assistant",
+        "data": {
+          "server": "Gevonden app"
+        }
+      },
+      "login": {
+        "title": "Inloggen met een beheerder",
+        "description": "Verbinden met {url}. Gebruik je Car share assistant-beheerdersaccount. Je wachtwoord wordt niet in de integratie opgeslagen.",
+        "data": {
+          "username": "Gebruikersnaam",
+          "password": "Wachtwoord"
+        }
+      },
+      "reconfigure": {
+        "title": "Serveradres aanpassen",
+        "description": "Het nieuwe adres moet naar dezelfde Car share assistant-installatie verwijzen.",
+        "data": {
+          "url": "Adres van de webapp"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Inloggen mislukt of koppeling ingetrokken. Controleer je aanmelding.",
+      "admin_required": "Gebruik een beheerdersaccount van Car share assistant.",
+      "server_update_required": "Werk de webapp bij naar versie 0.3.0 of hoger.",
+      "cannot_connect": "De app is niet bereikbaar. Controleer het netwerk en serveradres.",
+      "invalid_response": "Ongeldig adres of API-antwoord. Controleer de webapp-versie.",
+      "wrong_instance": "Dit adres verwijst naar een andere installatie."
+    },
+    "abort": {
+      "already_configured": "Deze installatie is al toegevoegd.",
+      "wrong_instance": "Dit is een andere Car share assistant-installatie.",
+      "invalid_discovery": "Ongeldige ontdekkingsgegevens. Verbind handmatig.",
+      "reauth_successful": "Opnieuw ingelogd.",
+      "reconfigure_successful": "Het adres is aangepast."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Synchronisatie",
+        "data": {
+          "scan_interval": "Verversingsinterval (minuten)"
+        }
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "cost_this_month": {
+        "name": "Kosten deze maand"
+      },
+      "cost_last_month": {
+        "name": "Kosten vorige maand"
+      },
+      "cost_through_today": {
+        "name": "Kosten tot en met vandaag"
+      },
+      "rides_this_month": {
+        "name": "Ritten deze maand"
+      },
+      "driver_rides_this_month": {
+        "name": "Bestuurdersritten deze maand"
+      },
+      "next_reservation": {
+        "name": "Volgende reservering"
+      },
+      "current_driver": {
+        "name": "Huidige bestuurder"
+      },
+      "next_start": {
+        "name": "Volgende reservering begint"
+      },
+      "next_end": {
+        "name": "Volgende reservering eindigt"
+      }
+    },
+    "binary_sensor": {
+      "reserved": {
+        "name": "Gereserveerd"
+      }
+    }
+  },
+  "selector": {
+    "route": {
+      "options": {
+        "z1": "1× eerste bestemming retour",
+        "z2": "2× eerste bestemming retour",
+        "g1": "1× tweede bestemming retour",
+        "other": "Anders (kilometers)"
+      }
+    }
+  },
+  "services": {
+    "create_reservation": {
+      "name": "Reservering aanmaken",
+      "description": "Reserveer voor het geselecteerde gezinslid, inclusief kostenverdeling en opmerking.",
+      "fields": {
+        "vehicle_id": {
+          "name": "Auto",
+          "description": "Kies het auto-apparaat. In YAML mag ook het stabiele auto-ID uit de app."
+        },
+        "person_id": {
+          "name": "Reserveren voor",
+          "description": "Kies het gezinslid dat rijdt. Iedereen in HA kan een gezinslid selecteren."
+        },
+        "start_time": {
+          "name": "Begintijd",
+          "description": "Gebruik hele minuten. Zonder tijdzone geldt de tijdzone van de auto-app."
+        },
+        "end_time": {
+          "name": "Eindtijd",
+          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+        },
+        "route": {
+          "name": "Soort rit",
+          "description": "De twee bestemmingen en tarieven zijn instelbaar in de webapp. Bij Anders vul je kilometers in."
+        },
+        "participants": {
+          "name": "Kosten delen met",
+          "description": "De bestuurder wordt altijd meegenomen. Kosten worden gelijk verdeeld."
+        },
+        "kilometers": {
+          "name": "Afstand",
+          "description": "Verplicht groter dan nul bij Anders."
+        },
+        "comment": {
+          "name": "Opmerking",
+          "description": "Wordt bij de reservering opgeslagen."
+        },
+        "idempotency_key": {
+          "name": "Unieke verzoekcode",
+          "description": "Optioneel: 16–80 letters/cijfers/koppeltekens. Dezelfde code en invoer maken geen tweede reservering."
+        },
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    },
+    "update_reservation": {
+      "name": "Reservering wijzigen",
+      "description": "Vervang alle ritgegevens van een bestaande reservering.",
+      "fields": {
+        "reservation_id": {
+          "name": "Reserverings-ID",
+          "description": "Uit het actieantwoord, rittenopvraag of entiteitsattributen."
+        },
+        "vehicle_id": {
+          "name": "Auto",
+          "description": "Kies het auto-apparaat. In YAML mag ook het stabiele auto-ID uit de app."
+        },
+        "person_id": {
+          "name": "Reserveren voor",
+          "description": "Kies het gezinslid dat rijdt. Iedereen in HA kan een gezinslid selecteren."
+        },
+        "start_time": {
+          "name": "Begintijd",
+          "description": "Gebruik hele minuten. Zonder tijdzone geldt de tijdzone van de auto-app."
+        },
+        "end_time": {
+          "name": "Eindtijd",
+          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+        },
+        "route": {
+          "name": "Soort rit",
+          "description": "De twee bestemmingen en tarieven zijn instelbaar in de webapp. Bij Anders vul je kilometers in."
+        },
+        "participants": {
+          "name": "Kosten delen met",
+          "description": "De bestuurder wordt altijd meegenomen. Kosten worden gelijk verdeeld."
+        },
+        "kilometers": {
+          "name": "Afstand",
+          "description": "Verplicht groter dan nul bij Anders."
+        },
+        "comment": {
+          "name": "Opmerking",
+          "description": "Wordt bij de reservering opgeslagen."
+        },
+        "version": {
+          "name": "Versienummer",
+          "description": "Optioneel. Zonder invoer wordt de huidige versie eerst opgehaald."
+        },
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    },
+    "cancel_reservation": {
+      "name": "Reservering annuleren",
+      "description": "Annuleer een bestaande reservering.",
+      "fields": {
+        "reservation_id": {
+          "name": "Reserverings-ID",
+          "description": "Uit het actieantwoord, rittenopvraag of entiteitsattributen."
+        },
+        "version": {
+          "name": "Versienummer",
+          "description": "Optioneel. Zonder invoer wordt de huidige versie eerst opgehaald."
+        },
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    },
+    "check_availability": {
+      "name": "Beschikbaarheid controleren",
+      "description": "Controleer zonder te reserveren. Geeft antwoordgegevens terug.",
+      "fields": {
+        "vehicle_id": {
+          "name": "Auto",
+          "description": "Kies het auto-apparaat. In YAML mag ook het stabiele auto-ID uit de app."
+        },
+        "start_time": {
+          "name": "Begintijd",
+          "description": "Gebruik hele minuten. Zonder tijdzone geldt de tijdzone van de auto-app."
+        },
+        "end_time": {
+          "name": "Eindtijd",
+          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+        },
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    },
+    "get_reservations": {
+      "name": "Reserveringen ophalen",
+      "description": "Vraag reserveringen voor een periode op, eventueel per auto of deelnemer.",
+      "fields": {
+        "start_time": {
+          "name": "Begintijd",
+          "description": "Gebruik hele minuten. Zonder tijdzone geldt de tijdzone van de auto-app."
+        },
+        "end_time": {
+          "name": "Eindtijd",
+          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+        },
+        "vehicle_id": {
+          "name": "Auto",
+          "description": "Kies het auto-apparaat. In YAML mag ook het stabiele auto-ID uit de app."
+        },
+        "person_id": {
+          "name": "Reserveren voor",
+          "description": "Kies het gezinslid dat rijdt. Iedereen in HA kan een gezinslid selecteren."
+        },
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    },
+    "refresh": {
+      "name": "Vernieuwen",
+      "description": "Ververs de auto’s, personen, reserveringen en maandkosten.",
+      "fields": {
+        "config_entry_id": {
+          "name": "Installatie",
+          "description": "Alleen nodig bij meerdere Car share assistant-installaties."
+        }
+      }
+    }
+  }
+}
