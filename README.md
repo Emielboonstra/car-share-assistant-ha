@@ -1,6 +1,10 @@
 # Car share assistant voor Home Assistant
 
-Custom integratie voor de eigen Car share assistant-webapp voor gezinsauto’s. **Eerste testversie: 0.1.0.** Er is geen verbinding met Wheelshare.
+![Car share assistant](custom_components/car_share_assistant/brand/icon.png)
+
+Custom integratie voor de eigen Car share assistant-webapp voor gezinsauto’s. **Testversie: 0.1.1.** Er is geen verbinding met Wheelshare.
+
+Versie 0.1.1 bevat het nieuwe logo, lokaal meegeleverd in `brand/` voor de Home Assistant-interface. Werk de integratie bij via Marketplace en herstart Home Assistant om de nieuwe afbeeldingen te laden.
 
 ## Vereisten
 
