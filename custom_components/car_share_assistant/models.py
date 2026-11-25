@@ -23,6 +23,7 @@ class Reservation:
     kilometers: float
     rates: dict
     version: int
+    cost_waived: bool = False
 
     @classmethod
     def parse(cls, data: dict) -> Reservation:
@@ -44,6 +45,7 @@ class Reservation:
                 data["kilometers"],
                 data["rates"],
                 data["version"],
+                bool(data.get("cost_waived", False)),
             )
         except KeyError, ValueError, TypeError:
             raise ApiError("De app gaf een ongeldig reserveringsmodel terug.") from None
@@ -54,4 +56,7 @@ class Reservation:
             self.route, f"Anders: {self.kilometers} km"
         )
         names = ", ".join(people.get(uid, {}).get("name", uid) for uid in self.participants)
-        return f"Auto: {self.vehicle_name}\nBestuurder: {self.person_name}\nRit: {route}\nDeelnemers: {names}\nOpmerking: {self.comment}"
+        description = f"Auto: {self.vehicle_name}\nBestuurder: {self.person_name}\nRit: {route}\nDeelnemers: {names}\nOpmerking: {self.comment}"
+        return description + (
+            "\nKosten: gratis voor iedereen vanwege een vrijgestelde deelnemer." if self.cost_waived else ""
+        )

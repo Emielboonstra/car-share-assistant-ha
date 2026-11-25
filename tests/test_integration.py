@@ -198,3 +198,64 @@ async def test_cancel_removes_reservation_from_calendar(hass, entry, api_mock):
     assert hass.states.get(calendar).state == "off"
     assert "message" not in hass.states.get(calendar).attributes
     assert entry.runtime_data.upcoming("vehicle", "car-a") is None
+
+
+async def test_multiday_action_and_calendar_keep_entire_interval_and_free_costs(hass, entry, api_mock):
+    long = {
+        **RESERVATION,
+        "start_time": "2026-12-11T18:00:00+01:00",
+        "end_time": "2026-12-14T09:00:00+01:00",
+        "cost_waived": True,
+        "total_cents": 0,
+    }
+    api_mock["reservations"].return_value = [long]
+    api_mock["create"].return_value = {"reservation": long}
+    await setup(hass, entry)
+    result = await hass.services.async_call(
+        DOMAIN,
+        "create_reservation",
+        {
+            "vehicle_id": "car-a",
+            "person_id": "person-b",
+            "start_time": long["start_time"],
+            "end_time": long["end_time"],
+            "route": "g1",
+        },
+        blocking=True,
+        return_response=True,
+    )
+    self_body = api_mock["create"].call_args.args[0]
+    assert self_body["start_time"] == long["start_time"]
+    assert self_body["end_time"] == long["end_time"]
+    assert result["reservation"]["total_cents"] == 0
+    calendar = entity_id(hass, "calendar", "vehicle", "car-a", "calendar")
+    events = await hass.services.async_call(
+        "calendar",
+        "get_events",
+        {
+            "entity_id": calendar,
+            "start_date_time": "2026-12-12T00:00:00+01:00",
+            "end_date_time": "2026-12-13T00:00:00+01:00",
+        },
+        blocking=True,
+        return_response=True,
+    )
+    event = events[calendar]["events"][0]
+    assert event["start"] == long["start_time"]
+    assert event["end"] == long["end_time"]
+    assert "gratis voor iedereen" in event["description"]
+    api_mock["costs"].return_value = {
+        "people": [
+            {
+                "person_id": p["id"],
+                "amount_cents": 0,
+                "through_today_cents": 0,
+                "reservation_count": 1,
+                "driver_count": 1,
+            }
+            for p in PEOPLE
+        ]
+    }
+    await entry.runtime_data.async_refresh()
+    for uid in ["person-a", "person-b"]:
+        assert hass.states.get(entity_id(hass, "sensor", "person", uid, "cost_this_month")).state == "0.0"

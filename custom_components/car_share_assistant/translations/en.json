@@ -130,7 +130,7 @@
         },
         "end_time": {
           "name": "End time",
-          "description": "After start; reservations must stay within one local day."
+          "description": "After start; the end date may be later."
         },
         "route": {
           "name": "Route",
@@ -180,7 +180,7 @@
         },
         "end_time": {
           "name": "End time",
-          "description": "After start; reservations must stay within one local day."
+          "description": "After start; the end date may be later."
         },
         "route": {
           "name": "Route",
@@ -240,7 +240,7 @@
         },
         "end_time": {
           "name": "End time",
-          "description": "After start; reservations must stay within one local day."
+          "description": "After start; the end date may be later."
         },
         "config_entry_id": {
           "name": "Installation",
@@ -258,7 +258,7 @@
         },
         "end_time": {
           "name": "End time",
-          "description": "After start; reservations must stay within one local day."
+          "description": "After start; the end date may be later."
         },
         "vehicle_id": {
           "name": "Vehicle",

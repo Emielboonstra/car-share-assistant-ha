@@ -108,8 +108,6 @@ def async_setup_services(hass):
                 if action == "get_reservations":
                     filters = {key: value for key, value in (("vehicle_id", vehicle), ("person_id", person)) if value}
                     return {"reservations": await client.reservations(start, end, **filters)}
-                if start.astimezone(coordinator.zone).date() != end.astimezone(coordinator.zone).date():
-                    raise ServiceValidationError("Een reservering moet binnen één lokale dag vallen.")
                 if start.second or start.microsecond or end.second or end.microsecond:
                     raise ServiceValidationError("Gebruik hele minuten voor de reservering.")
                 if data["route"] == "other" and data["kilometers"] <= 0:

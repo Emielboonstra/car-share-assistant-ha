@@ -2,14 +2,14 @@
 
 ![Car share assistant](custom_components/car_share_assistant/brand/icon.png)
 
-Custom integratie voor de eigen Car share assistant-webapp voor gezinsauto’s. **Testversie: 0.1.1.** Er is geen verbinding met Wheelshare.
+Custom integratie voor de eigen Car share assistant-webapp voor gezinsauto’s. **Testversie: 0.2.0.** Er is geen verbinding met Wheelshare.
 
-Versie 0.1.1 bevat het nieuwe logo, lokaal meegeleverd in `brand/` voor de Home Assistant-interface. Werk de integratie bij via Marketplace en herstart Home Assistant om de nieuwe afbeeldingen te laden.
+Versie 0.2.0 ondersteunt meerdaagse reserveringen. Een beheerder kan in de webapp bij een persoon **Hoeft niet te betalen** inschakelen: zodra die persoon als bestuurder of medereiziger deelneemt, is de hele reservering voor iedereen gratis. Dat geldt ook voor bestaande reserveringen en wordt verwerkt in de HA-kostensensoren. Werk de integratie bij via Marketplace en herstart Home Assistant.
 
 ## Vereisten
 
 - Home Assistant **2026.11.2 of hoger**.
-- Car share assistant-webapp **0.3.0 of hoger**, bereikbaar vanaf Home Assistant.
+- Car share assistant-webapp **0.4.0 of hoger**, bereikbaar vanaf Home Assistant.
 - Een beheerdersaccount van de webapp. Een gewoon gezinsaccount mag geen HA-koppeling autoriseren.
 
 ## Installeren via Marketplace
@@ -80,7 +80,7 @@ data:
 response_variable: reservering
 ```
 
-Routes: `z1` eerste bestemming één keer retour, `z2` eerste bestemming twee keer retour, `g1` tweede bestemming één keer retour, `other` zelf kilometers opgeven. De namen en tarieven stel je in de webapp in. De bestuurder wordt altijd als deelnemer toegevoegd. `kilometers` moet groter dan nul zijn bij `other`. Alle geselecteerde deelnemers delen de kosten gelijk.
+Routes: `z1` eerste bestemming één keer retour, `z2` eerste bestemming twee keer retour, `g1` tweede bestemming één keer retour, `other` zelf kilometers opgeven. De namen en tarieven stel je in de webapp in. De bestuurder wordt altijd als deelnemer toegevoegd. Zodra één deelnemer is vrijgesteld, betaalt niemand voor die reservering. `kilometers` moet groter dan nul zijn bij `other`. Alle geselecteerde deelnemers delen de kosten gelijk.
 
 `create_reservation` geeft desgewenst de reservering, ID, kostenverdeling, gebruikte `idempotency_key` en `synchronized` terug. `update_reservation` en `cancel_reservation` geven de opgeslagen reservering terug. De kalender ondersteunt geen aanmaken, wijzigen of verwijderen; daarvoor zijn uitsluitend deze acties bedoeld.
 
@@ -100,13 +100,13 @@ Standaard wordt iedere vijf minuten bijgewerkt. Dat is via de integratie-opties 
 
 Mutaties worden niet automatisch opnieuw verstuurd. Een netwerkfout kan betekenen dat een reservering toch is opgeslagen: controleer eerst de planning. Voor veilig herhalen kun je vooraf zelf een `idempotency_key` instellen van 16–80 letters, cijfers of koppeltekens; gebruik dezelfde sleutel met dezelfde invoer. Als opslaan slaagt maar de daaropvolgende synchronisatie mislukt, blijft het actieantwoord succesvol met `synchronized: false`. Gebruik dan Vernieuwen.
 
-Tijden gebruiken offsets of, als je geen tijdzone invult, de tijdzone van de app: Europe/Amsterdam. Reserveringen gebruiken hele minuten en blijven binnen één lokale dag. Tijden in het ontbrekende of dubbele uur bij zomer-/wintertijd worden geweigerd. Tarieven van bestaande ritten blijven behouden, zoals in de webapp.
+Tijden gebruiken offsets of, als je geen tijdzone invult, de tijdzone van de app: Europe/Amsterdam. Reserveringen gebruiken hele minuten en mogen meerdere dagen duren. Het volledige interval blijft in de autokalender staan. Het gekozen ritbedrag wordt één keer geboekt op de begindatum, ook wanneer de reservering een maandgrens passeert. Tijden in het ontbrekende of dubbele uur bij zomer-/wintertijd worden geweigerd. Tarieven van bestaande ritten blijven behouden, zoals in de webapp.
 
 ## Problemen oplossen
 
 - **Niet ontdekt:** controleer lokaal netwerk/multicast en of ontdekking in de webapp aanstaat (`CARSHARE_DISCOVERY=1`); gebruik anders Handmatig verbinden.
 - **Aanmelding geweigerd:** gebruik een beheerder van de auto-app, niet je Home Assistant-account.
-- **Webapp bijwerken:** aanmelden vanuit HA vereist webapp 0.3.0 of hoger.
+- **Webapp bijwerken:** deze integratieversie vereist webapp 0.4.0 of hoger voor meerdaagse reserveringen en betalingsvrijstelling.
 - **Onbeschikbaar:** controleer bereikbaarheid vanaf HA en of de sleutel in de webapp is ingetrokken. Verlopen toegang start opnieuw aanmelden.
 - **Adres gewijzigd:** gebruik Opnieuw configureren; verwijder de integratie niet om alleen het adres te wijzigen.
 - **Conflict:** de auto is al gereserveerd of iemand heeft de rit ondertussen gewijzigd. Haal de reservering opnieuw op.

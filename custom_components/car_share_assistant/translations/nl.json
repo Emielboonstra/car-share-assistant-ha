@@ -130,7 +130,7 @@
         },
         "end_time": {
           "name": "Eindtijd",
-          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+          "description": "Na de begintijd; de einddatum mag later liggen."
         },
         "route": {
           "name": "Soort rit",
@@ -180,7 +180,7 @@
         },
         "end_time": {
           "name": "Eindtijd",
-          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+          "description": "Na de begintijd; de einddatum mag later liggen."
         },
         "route": {
           "name": "Soort rit",
@@ -240,7 +240,7 @@
         },
         "end_time": {
           "name": "Eindtijd",
-          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+          "description": "Na de begintijd; de einddatum mag later liggen."
         },
         "config_entry_id": {
           "name": "Installatie",
@@ -258,7 +258,7 @@
         },
         "end_time": {
           "name": "Eindtijd",
-          "description": "Na begintijd en bij reserveren op dezelfde lokale dag."
+          "description": "Na de begintijd; de einddatum mag later liggen."
         },
         "vehicle_id": {
           "name": "Auto",

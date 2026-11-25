@@ -1,6 +1,6 @@
 # Car share assistant service-API v1
 
-Contract voor app-versie 0.3.0. Deze endpoints zijn geïmplementeerd in de eigen Car share assistant-server en met een tijdelijke testdatabase getest. Voorbeelden bevatten fictieve gegevens. De webapp is een apart project; deze repository bevat het contract voor de toekomstige HA-client.
+Contract voor app-versie 0.4.0. Deze endpoints zijn geïmplementeerd in de eigen Car share assistant-server en met een tijdelijke testdatabase getest. Voorbeelden bevatten fictieve gegevens. De webapp is een apart project; deze repository bevat het contract voor de toekomstige HA-client.
 
 ## Authenticatie en bevoegdheden
 
@@ -30,7 +30,7 @@ Tijdsfilters gebruiken ISO 8601 met offset of `Z`. Het bereik is halfopen `[star
 
 ## Modellen
 
-`people`: `id`, `name`, `username`, `role` (`admin`/`member`), `color`, `version`.
+`people`: `id`, `name`, `username`, `role` (`admin`/`member`), `color`, `version`, `cost_exempt` (alleen door beheerders in de webapp wijzigbaar).
 
 `vehicles`: `id`, `name`, `plate`, `detail`, `version`.
 
@@ -55,11 +55,11 @@ Verplicht: auto, bestuurder, start/eind en route. `participants` standaard leeg;
 
 Routes: `z1` één retour naar bestemming z, `z2` twee retours, `g1` één retour naar bestemming g, `other` losse kilometers. Namen komen uit de instellingen. Alle webappopties zijn beschikbaar via de API.
 
-Start/eind worden naar `Europe/Amsterdam` omgerekend. Beide moeten op dezelfde lokale dag en op hele minuten vallen; begin ligt voor einde. Niet-bestaande en dubbelzinnige lokale tijden rond zomertijd/wintertijd worden geweigerd. Het systeem ondersteunt momenteel geen ritten over middernacht. Reserveren in het verleden is, net als in de webapp, toegestaan.
+Start/eind worden naar `Europe/Amsterdam` omgerekend. Beide moeten op hele minuten vallen; begin ligt voor einde. Het einde mag op een latere datum liggen. Niet-bestaande en dubbelzinnige lokale tijden rond zomertijd/wintertijd worden geweigerd. Meerdaagse reserveringen zijn ondersteund (`cross_midnight=true`). Periodefilters en beschikbaarheid nemen ook reserveringen mee die vóór het gevraagde bereik beginnen en daarin doorlopen. Reserveren in het verleden is, net als in de webapp, toegestaan.
 
-Reserveringsantwoord bevat `id`, `vehicle_id`, `vehicle_name`, `person_id`, `person_name`, `start_time`, `end_time` met juiste lokale offset, `route`, `participants` inclusief bestuurder, `kilometers`, `comment`, opgeslagen `rates`, `total_cents`, `shares`, `status` (`active`/`cancelled`) en `version`.
+Reserveringsantwoord bevat `id`, `vehicle_id`, `vehicle_name`, `person_id`, `person_name`, `start_time`, `end_time` met juiste lokale offset, `route`, `participants` inclusief bestuurder, `kilometers`, `comment`, opgeslagen `rates`, `total_cents`, `tariff_cents`, `cost_waived`, `shares`, `status` (`active`/`cancelled`) en `version`.
 
-`shares` bevat per deelnemer `person_id` en `amount_cents`. Geldbedragen zijn gehele eurocenten. Tarieven worden bij aanmaken opgeslagen en blijven bij wijzigingen behouden. Het bedrag wordt gelijk verdeeld; resterende centen gaan in volgorde eerst naar de bestuurder, daarna de overige deelnemers.
+`shares` bevat per deelnemer `person_id` en `amount_cents`. Geldbedragen zijn gehele eurocenten. `tariff_cents` is het opgeslagen rittarief; `total_cents` is het werkelijk te verdelen bedrag. Zodra één deelnemer `cost_exempt` heeft, is `cost_waived=true` en zijn `total_cents` en alle aandelen nul. De vrijstelling geldt ook voor bestaande reserveringen; uitschakelen herstelt het oorspronkelijke opgeslagen tarief. De geselecteerde route/kilometers worden één keer per reservering berekend, zonder dagtoeslag. Maandkosten rekenen de reservering één keer toe aan de begindatum. Tarieven worden bij aanmaken opgeslagen en blijven bij wijzigingen behouden. Het bedrag wordt gelijk verdeeld; resterende centen gaan in volgorde eerst naar de bestuurder, daarna de overige deelnemers.
 
 Maandkosten bevatten per persoon `person_id`, `name`, `amount_cents`, `through_today_cents`, `reservation_count`, `driver_count`. Dit zijn reserveringskosten, inclusief geplande ritten; geen bewijs van daadwerkelijk gereden kilometers of betalingen. `through_today_cents` telt reserveringen op datums tot en met vandaag, Amsterdamse tijd. Geannuleerde ritten tellen niet mee.
 
@@ -92,3 +92,5 @@ Gebruik een begrensde timeout, certificaatcontrole, geen redirects naar andere h
 ## Automatische ontdekking
 
 De webapp kan met `CARSHARE_DISCOVERY=1` mDNS adverteren op `_carshare._tcp.local.`. TXT-velden bevatten alleen het stabiele `id`, `api=1` en optioneel het ingestelde HTTPS-`url`. Geen accounts of secrets. Zonder HTTPS-adres wordt het gevonden lokale adres met poort gebruikt. Een bestaande HA-configuratie wordt niet automatisch door mDNS aangepast; het adres kan via Opnieuw configureren worden gewijzigd na controle van het installatie-ID.
+
+De webinterface gebruikt daarnaast `date`, `end_date`, `start` en `end`. Bij oude clients zonder `end_date` geldt dezelfde datum als `date`. De databasemigratie vult bestaande ritten op die manier aan en behoudt IDs, tarieven en idempotentiesleutels.
